@@ -3,6 +3,6 @@ uvicorn
 pydantic
 python-dotenv
 mem0ai
-langchain-openai
+langchain-google-genai
 semgrep
 checkov

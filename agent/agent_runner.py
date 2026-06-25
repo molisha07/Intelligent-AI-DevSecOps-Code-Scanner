@@ -1,7 +1,7 @@
 
 from langchain.tools import Tool
 from langchain.agents import initialize_agent, AgentType
-from langchain.llms import OpenAI  
+from langchain_google_genai import ChatGoogleGenerativeAI
 from agent.tools_semgrep import run_semgrep
 from agent.llm_client import llm_generate
 
@@ -16,8 +16,8 @@ semgrep_tool = Tool(
     description="Run semgrep on a codebase and return JSON results."
 )
 
-# LLM wrapper for LangChain  using remote OpenAI:
-# llm = OpenAI(temperature=0)
+# LLM wrapper for LangChain using Google Gemini:
+# llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0)
 # If using custom local LLM
 def run_scan_and_summarize(target_dir: str):
     semgrep_output = run_semgrep(target_dir, rule_dir="rules")

@@ -8,7 +8,7 @@ An AI-powered DevSecOps static analysis platform that automatically scans codeba
 
 - **Static Application Security Testing (SAST)**: Scans Python/JavaScript code using **Semgrep**.
 - **Infrastructure as Code (IaC) Scanning**: Scans Dockerfiles, Terraform scripts, and Kubernetes manifests using **Checkov**.
-- **AI-Powered Vulnerability Analysis**: Uses OpenAI (`gpt-4o-mini`) via **LangChain** to analyze raw scanner outputs, rank them by severity, and explain how to remediate them.
+- **AI-Powered Vulnerability Analysis**: Uses Google Gemini (`gemini-1.5-flash`) via **LangChain** to analyze raw scanner outputs, rank them by severity, and explain how to remediate them.
 - **Vulnerability Memory Layer**: Integrates with **Mem0 Cloud** to remember previously detected vulnerabilities, enabling the AI to recall recurring issues.
 - **Git Integration**: Automatically clones public GitHub repositories, runs scans, saves findings, and performs clean-ups.
 
@@ -19,7 +19,7 @@ An AI-powered DevSecOps static analysis platform that automatically scans codeba
 - **Framework**: FastAPI (Python)
 - **ASGI Server**: Uvicorn
 - **Security Scanners**: Semgrep, Checkov
-- **LLM Engine**: OpenAI (via LangChain)
+- **LLM Engine**: Google Gemini (via LangChain)
 - **Memory Storage**: Mem0 Cloud
 - **Git Client**: GitPython
 
@@ -34,7 +34,7 @@ An AI-powered DevSecOps static analysis platform that automatically scans codeba
 │   ├── agent_runner.py      # LangChain tool definition for running scans
 │   ├── github_utils.py      # Repository cloning and directory cleanup
 │   ├── iac_scanner.py       # Checkov execution wrapper
-│   ├── llm_client.py        # OpenAI prompt structure and invocation
+│   ├── llm_client.py        # Gemini prompt structure and invocation
 │   └── tools_semgrep.py     # Semgrep execution wrapper and file parsing
 ├── mem/
 │   └── mem0_client.py       # Helper functions to interface with Mem0 Cloud
@@ -54,7 +54,7 @@ An AI-powered DevSecOps static analysis platform that automatically scans codeba
 
 - Python 3.8+
 - Git installed on your system
-- An OpenAI API Key
+- A Gemini API Key
 - A Mem0 API Key
 
 ### Installation
@@ -75,9 +75,11 @@ An AI-powered DevSecOps static analysis platform that automatically scans codeba
 Create a `.env` file in the root directory and configure your keys:
 
 ```env
-OPENAI_API_KEY=your_openai_api_key
+GEMINI_API_KEY=your_gemini_api_key
 MEM0_API_KEY=your_mem0_api_key
 ```
+
+*Note: You can also use `GOOGLE_API_KEY` in place of `GEMINI_API_KEY`.*
 
 ### Running the Server
 
@@ -96,7 +98,6 @@ The application will start running locally at `http://127.0.0.1:8000`.
 Once the server is running, you can access the interactive Swagger documentation at `http://127.0.0.1:8000/docs`.
 
 ### 1. Scan Local Path (`POST /scan`)
-*Scans a directory on your local machine using Semgrep.*
 - **Request Body**:
   ```json
   {
@@ -105,7 +106,6 @@ Once the server is running, you can access the interactive Swagger documentation
   ```
 
 ### 2. Scan GitHub Repo (`POST /scan-github`)
-*Clones a remote GitHub repository, runs Semgrep, queries OpenAI for remediation, stores findings in Mem0, and deletes the clone.*
 - **Request Body**:
   ```json
   {
@@ -114,7 +114,6 @@ Once the server is running, you can access the interactive Swagger documentation
   ```
 
 ### 3. Scan Infrastructure-as-Code (`POST /scan-iac`)
-*Clones a remote repository, runs Checkov, summarizes using OpenAI, and maps findings to Mem0 Cloud.*
 - **Request Body**:
   ```json
   {
