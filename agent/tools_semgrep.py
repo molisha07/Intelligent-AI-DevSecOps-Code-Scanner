@@ -3,7 +3,34 @@
 import subprocess
 import json
 import os
+import sys
 from typing import Dict, Any
+
+def find_semgrep_executable() -> str:
+    """Dynamically locate the semgrep executable relative to the Python environment or system PATH."""
+    python_dir = os.path.dirname(sys.executable)
+    
+    # 1. Check Windows 'Scripts' folder relative to Python executable
+    semgrep_windows = os.path.join(python_dir, "Scripts", "semgrep.exe")
+    if os.path.exists(semgrep_windows):
+        return semgrep_windows
+    
+    # 2. Check direct directory (e.g. virtual environment on Windows or custom installs)
+    semgrep_win_bin = os.path.join(python_dir, "semgrep.exe")
+    if os.path.exists(semgrep_win_bin):
+        return semgrep_win_bin
+        
+    # 3. Check Unix-like bin folder (often python is in virtualenv bin/)
+    semgrep_unix = os.path.join(python_dir, "semgrep")
+    if os.path.exists(semgrep_unix):
+        return semgrep_unix
+        
+    semgrep_unix_bin = os.path.join(os.path.dirname(python_dir), "bin", "semgrep")
+    if os.path.exists(semgrep_unix_bin):
+        return semgrep_unix_bin
+        
+    # 4. Fall back to global system PATH search
+    return "semgrep"
 
 
 # Semgrep Runner 
@@ -17,8 +44,11 @@ def run_semgrep(target_dir: str, rule_dir: str = "rules") -> Dict[str, Any]:
         target_dir = os.path.abspath(target_dir).replace("\\", "/")
         print(f" Scanning directory: {target_dir}")
 
+        # Get dynamic semgrep executable path
+        semgrep_bin = find_semgrep_executable()
+
         # Always use built-in rules to avoid missing "rules/" folder error
-        cmd = ["semgrep", "--config=auto", "--json", target_dir]
+        cmd = [semgrep_bin, "--config=auto", "--json", target_dir]
         print(f" Running Semgrep command: {' '.join(cmd)}")
 
         # Force UTF-8 to avoid encoding errors

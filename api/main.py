@@ -330,7 +330,7 @@ async def scan_iac_repo(req: GithubScanRequest):
 
     finally:
         # 6️⃣ Always delete cloned repo
-        if repo_path:
-            delete_repo(repo_path)
+           if repo_path:
+              delete_repo(repo_path)
 
     
